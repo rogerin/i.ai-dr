@@ -1,0 +1,733 @@
+{
+  "name": "Agente IA RAG",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "triggerOn": "specificFolder",
+        "folderToWatch": {
+          "__rl": true,
+          "value": "1SA4-vCYAN8A_JEnAJEek-BSoaZ1z8SKv",
+          "mode": "list",
+          "cachedResultName": "caiowisdamy",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/1SA4-vCYAN8A_JEnAJEek-BSoaZ1z8SKv"
+        },
+        "event": "fileCreated",
+        "options": {}
+      },
+      "id": "9a1c3ea3-06b6-4f1d-8bf0-d18d7134c244",
+      "name": "Google Drive Trigger",
+      "type": "n8n-nodes-base.googleDriveTrigger",
+      "typeVersion": 1,
+      "position": [
+        380,
+        1080
+      ],
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "FTM4nFFSkoRRGBu4",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "39e1cfa9-0182-4511-8ecb-89264e5ed8e3",
+      "name": "When chat message received",
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        500,
+        340
+      ],
+      "webhookId": "94b56481-8482-4b96-bbce-c3a0eb5c5e4b",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=sessionId: {{ $json.body.sender }}\n\nA pergunta é: \n{{ $json.body.content }}\n\n\n- Perguntas sobre figado responsa com conceitos de um medico hepatologista.\n- caso queira saber sobre a saude, e tenha o nome do paciente mostre resultados de exame chame: consultarDocumentos\n- nuca fale qeu voce nao consegue fazer algo, responda o que conseguir com qualidade.\n",
+        "options": {}
+      },
+      "id": "df945ca7-7a28-40bf-931c-790f6bc7270e",
+      "name": "AI Agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.6,
+      "position": [
+        760,
+        160
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "7d538923-20a0-4748-b822-d8c0b2696a55",
+      "name": "OpenAI Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1,
+      "position": [
+        780,
+        380
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "UoQ7gvWFfsiWX0gG",
+          "name": "OpenAi DocHelp"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $('Webhook').item.json.body.sender }}"
+      },
+      "id": "fe072722-515d-4c83-8f52-a6eb63ccaab1",
+      "name": "Postgres Chat Memory",
+      "type": "@n8n/n8n-nodes-langchain.memoryPostgresChat",
+      "typeVersion": 1.1,
+      "position": [
+        860,
+        500
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "dq6AVvlsQpXmXdeE",
+          "name": "Postgres SupaBase DocHelp"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "name": "consultarDocumentos",
+        "description": "Você analisa exames médicos e informa os valores dos resultados das consultas de forma organizada.\n\nVocê primeiro mostra a media dos exames anteriores e mostra os dados do exame atual.\nMostre a porcentagem de piora ou melhoria com olhar clicico.\nEntre o exame anterior calcule se melhorou ou piorou, mostre o calculo de porcentagem e mostre se subiu ou diminuiu.\n\nsempre recomende algo, de preferencia procure um médico."
+      },
+      "id": "b3275926-7118-4e3b-bdb1-de8ec40e4e86",
+      "name": "Vector Store Tool",
+      "type": "@n8n/n8n-nodes-langchain.toolVectorStore",
+      "typeVersion": 1,
+      "position": [
+        920,
+        380
+      ]
+    },
+    {
+      "parameters": {
+        "tableName": {
+          "__rl": true,
+          "value": "documents",
+          "mode": "list",
+          "cachedResultName": "documents"
+        },
+        "options": {}
+      },
+      "id": "378a2d33-4d3e-4770-a7d3-694af745f384",
+      "name": "Supabase Vector Store",
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
+      "typeVersion": 1,
+      "position": [
+        900,
+        640
+      ],
+      "credentials": {
+        "supabaseApi": {
+          "id": "MCuoHmMdoIF34t9S",
+          "name": "Supabase DocHelp"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "0b353f85-501a-4c81-a110-bbc05ef71386",
+      "name": "OpenAI Chat Model1",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1,
+      "position": [
+        1140,
+        520
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "UoQ7gvWFfsiWX0gG",
+          "name": "OpenAi DocHelp"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "78a830fe-c031-449a-9393-5ffd2fab7c66",
+      "name": "Embeddings OpenAI",
+      "type": "@n8n/n8n-nodes-langchain.embeddingsOpenAi",
+      "typeVersion": 1,
+      "position": [
+        980,
+        780
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "UoQ7gvWFfsiWX0gG",
+          "name": "OpenAi DocHelp"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "405a9f12-4ecf-41a8-8e49-9971302ab39a",
+              "name": "id",
+              "value": "={{ $json.id }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "a2db3e39-db65-4175-b42d-f60273337d33",
+      "name": "Edit Fields",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        540,
+        1080
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "delete",
+        "tableId": "documents",
+        "filterType": "string",
+        "filterString": "=metadata->>file_id=like.*{{$json.id}}*"
+      },
+      "id": "9d7f1cbc-224d-44c4-8cd7-bd4bcb82b43b",
+      "name": "Supabase",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        760,
+        1080
+      ],
+      "alwaysOutputData": true,
+      "credentials": {
+        "supabaseApi": {
+          "id": "MCuoHmMdoIF34t9S",
+          "name": "Supabase DocHelp"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $('Edit Fields').item.json.id }}",
+          "mode": "id"
+        },
+        "options": {
+          "googleFileConversion": {
+            "conversion": {
+              "docsToFormat": "text/plain"
+            }
+          }
+        }
+      },
+      "id": "97ad6272-1af3-4a82-8bc5-6e6abb4cf20c",
+      "name": "Google Drive",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        940,
+        1080
+      ],
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "FTM4nFFSkoRRGBu4",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "text",
+        "options": {}
+      },
+      "id": "a59c99e2-9220-435d-a1f7-bb4844ba57d3",
+      "name": "Extract from File",
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1,
+      "position": [
+        1160,
+        1080
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "948b6961-901b-412e-ac5f-73884f8d123e",
+      "name": "Embeddings OpenAI1",
+      "type": "@n8n/n8n-nodes-langchain.embeddingsOpenAi",
+      "typeVersion": 1,
+      "position": [
+        1360,
+        1340
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "UoQ7gvWFfsiWX0gG",
+          "name": "OpenAi DocHelp"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "7090ba63-5c17-48b8-9cc9-044acb57bb8f",
+      "name": "Default Data Loader",
+      "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
+      "typeVersion": 1,
+      "position": [
+        1460,
+        1260
+      ]
+    },
+    {
+      "parameters": {
+        "chunkOverlap": 100
+      },
+      "id": "d9bcde32-4922-434a-8826-473e88b61fa2",
+      "name": "Character Text Splitter",
+      "type": "@n8n/n8n-nodes-langchain.textSplitterCharacterTextSplitter",
+      "typeVersion": 1,
+      "position": [
+        1540,
+        1420
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "insert",
+        "tableName": {
+          "__rl": true,
+          "value": "documents",
+          "mode": "list",
+          "cachedResultName": "documents"
+        },
+        "options": {
+          "queryName": "match_documents"
+        }
+      },
+      "id": "68f334f7-b8cd-43bc-8e42-dd41011535b9",
+      "name": "Supabase Vector Store1",
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
+      "typeVersion": 1,
+      "position": [
+        1360,
+        1080
+      ],
+      "credentials": {
+        "supabaseApi": {
+          "id": "MCuoHmMdoIF34t9S",
+          "name": "Supabase DocHelp"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.toolCalculator",
+      "typeVersion": 1,
+      "position": [
+        1140,
+        280
+      ],
+      "id": "012d4b64-68c8-4771-b6d3-00ecc218cdb1",
+      "name": "Calculator"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://logt.uzapi.com.br:3333/sendText",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "sessionkey",
+              "value": "2v-logt"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "session",
+              "value": "2v-logt"
+            },
+            {
+              "name": "number",
+              "value": "={{ $('Webhook').item.json.body.sender }}"
+            },
+            {
+              "name": "text",
+              "value": "={{ $json.output }}"
+            }
+          ]
+        },
+        "options": {
+          "redirect": {
+            "redirect": {}
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1280,
+        160
+      ],
+      "id": "5cd6767a-c8d8-40cf-bd6a-57eb02f9a3c4",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "receiverMessage",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        300,
+        140
+      ],
+      "id": "82dc08bb-abb7-4ab5-b0c2-d13d14f1c2ad",
+      "name": "Webhook",
+      "webhookId": "e88057d0-2e38-400d-a436-01c814484667"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "9853bf82-8860-41fd-8bdb-1da34a4654dc",
+              "leftValue": "={{ $json.body.type }}",
+              "rightValue": "text",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            },
+            {
+              "id": "e85629b1-f7b3-4bb1-8a46-6d0bfc2aec7c",
+              "leftValue": "={{ $json.body.isGroupMsg }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "false",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        500,
+        140
+      ],
+      "id": "fdb2d622-6e87-4297-b7d4-a693ccc70a34",
+      "name": "If"
+    }
+  ],
+  "pinData": {
+    "Webhook": [
+      {
+        "json": {
+          "headers": {
+            "host": "robot.keycore.com.br",
+            "x-real-ip": "168.119.122.238",
+            "x-forwarded-for": "168.119.122.238",
+            "x-forwarded-proto": "https",
+            "connection": "upgrade",
+            "content-length": "344",
+            "accept": "application/json, text/plain, */*",
+            "content-type": "application/json",
+            "user-agent": "axios/1.7.9",
+            "accept-encoding": "gzip, compress, deflate, br"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "wook": "RECEIVE_MESSAGE",
+            "type": "text",
+            "id": "false_558183643267@c.us_3AD230DC5882EF336901",
+            "session": "2v-logt",
+            "isGroupMsg": false,
+            "author": null,
+            "name": "Rogerio Alencar FILHO",
+            "phone": "558899297262",
+            "sender": "558183643267",
+            "content": "e joao silva como ta os resultados? consultarDocumentos",
+            "status": "RECEIVED",
+            "datetime": "08-02-2025 10:27:44"
+          },
+          "webhookUrl": "https://robot.keycore.com.br:5678/webhook/receiverMessage",
+          "executionMode": "production"
+        }
+      }
+    ],
+    "AI Agent": [
+      {
+        "json": {
+          "output": "Aqui estão os resultados dos exames de João da Silva nas suas consultas:\n\n### Consulta 1 - 10/01/2024:\n- Hemoglobina: 14.2 g/dL\n- Leucócitos: 6.500 /mm³\n- Plaquetas: 220.000 /mm³\n- Glicose: 92 mg/dL\n- Colesterol Total: 190 mg/dL\n- HDL: 50 mg/dL\n- LDL: 120 mg/dL\n- Triglicerídeos: 140 mg/dL\n\n### Consulta 2 - 15/03/2024:\n- Hemoglobina: 13.8 g/dL\n- Leucócitos: 6.200 /mm³\n- Plaquetas: 210.000 /mm³\n- Glicose: 95 mg/dL\n- Colesterol Total: 200 mg/dL\n- HDL: 48 mg/dL\n- LDL: 130 mg/dL\n- Triglicerídeos: 150 mg/dL\n\n### Consulta 3 - 20/06/2024:\n- Hemoglobina: 14.0 g/dL\n- Leucócitos: 6.800 /mm³\n- Plaquetas: 215.000 /mm³\n- Glicose: 97 mg/dL\n- Colesterol Total: 195 mg/dL\n- HDL: 52 mg/dL\n- LDL: 125 mg/dL\n- Triglicerídeos: 145 mg/dL\n\n### Consulta 4 - 25/01/2025:\n- Hemoglobina: 12.5 g/dL\n- Leucócitos: 7.200 /mm³\n- Plaquetas: 190.000 /mm³\n- Glicose: 110 mg/dL\n- Colesterol Total: 220 mg/dL\n- HDL: 40 mg/dL\n- LDL: 150 mg/dL\n- Triglicerídeos: 180 mg/dL\n\n**Análise das variações:**\n- **Hemoglobina:** diminuiu de 14.2 g/dL para 12.5 g/dL na última consulta.\n- **Leucócitos:** aumentou de 6.500 /mm³ para 7.200 /mm³ na última consulta.\n- **Plaquetas:** diminuiu de 220.000 /mm³ para 190.000 /mm³ na última consulta.\n- **Glicose:** aumentou de 92 mg/dL para 110 mg/dL na última consulta.\n- **Colesterol Total:** aumentou de 190 mg/dL para 220 mg/dL na última consulta.\n- **HDL:** diminuiu de 50 mg/dL para 40 mg/dL na última consulta.\n- **LDL:** aumentou de 120 mg/dL para 150 mg/dL na última consulta.\n- **Triglicerídeos:** aumentou de 140 mg/dL para 180 mg/dL na última consulta.\n\nÉ importante discutir os resultados com um médico para uma interpretação completa e recomendações de ações a serem tomadas."
+        }
+      }
+    ]
+  },
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Postgres Chat Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Vector Store Tool": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Supabase Vector Store": {
+      "ai_vectorStore": [
+        [
+          {
+            "node": "Vector Store Tool",
+            "type": "ai_vectorStore",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Vector Store Tool",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings OpenAI": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Supabase Vector Store",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Drive Trigger": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Supabase",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Supabase": {
+      "main": [
+        [
+          {
+            "node": "Google Drive",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Drive": {
+      "main": [
+        [
+          {
+            "node": "Extract from File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract from File": {
+      "main": [
+        [
+          {
+            "node": "Supabase Vector Store1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings OpenAI1": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Supabase Vector Store1",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Default Data Loader": {
+      "ai_document": [
+        [
+          {
+            "node": "Supabase Vector Store1",
+            "type": "ai_document",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Character Text Splitter": {
+      "ai_textSplitter": [
+        [
+          {
+            "node": "Default Data Loader",
+            "type": "ai_textSplitter",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Calculator": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "94956204-fc1a-44f4-9ec2-f4b4c79c3d38",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "ba44f21340011f2d154397d5d2fe1c92d2a5a70567462785be0b813d8c579df0"
+  },
+  "id": "GiW5Fz0UisvcLKm4",
+  "tags": []
+}
