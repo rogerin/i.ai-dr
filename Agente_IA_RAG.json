@@ -366,7 +366,7 @@
           "parameters": [
             {
               "name": "sessionkey",
-              "value": "2v-logt"
+              "value": "---"
             }
           ]
         },
@@ -375,7 +375,7 @@
           "parameters": [
             {
               "name": "session",
-              "value": "2v-logt"
+              "value": "---"
             },
             {
               "name": "number",
@@ -485,7 +485,7 @@
             "wook": "RECEIVE_MESSAGE",
             "type": "text",
             "id": "false_558183643267@c.us_3AD230DC5882EF336901",
-            "session": "2v-logt",
+            "session": "---",
             "isGroupMsg": false,
             "author": null,
             "name": "Rogerio Alencar FILHO",
